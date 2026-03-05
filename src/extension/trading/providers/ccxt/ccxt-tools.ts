@@ -36,27 +36,29 @@ Returns:
 - nextFundingTime: when the next funding payment occurs
 - previousFundingRate: the previous period's rate
 
-Positive rate = longs pay shorts. Negative rate = shorts pay longs.`,
+Positive rate = longs pay shorts. Negative rate = shorts pay longs.
+Use searchContracts first to get the aliceId.`,
       inputSchema: z.object({
-        symbol: z.string().describe('Trading pair symbol'),
+        aliceId: z.string().describe('Contract identifier from searchContracts (e.g. "bybit-BTCUSDT")'),
         source: z.string().optional().describe(sourceDesc),
       }),
-      execute: async ({ symbol, source }) => {
+      execute: async ({ aliceId, source }) => {
         const resolved = resolveCcxtOne(source)
         if ('error' in resolved) return resolved
         const { account, id } = resolved
-        const result = await account.getFundingRate({ symbol })
+        const result = await account.getFundingRate({ aliceId })
         return { source: id, ...result }
       },
     }),
 
     getOrderBook: tool({
-      description: `Query the order book (market depth) for a symbol.
+      description: `Query the order book (market depth) for a contract.
 
 Returns bids and asks sorted by price. Each level is [price, amount].
-Use this to evaluate liquidity and potential slippage before placing large orders.`,
+Use this to evaluate liquidity and potential slippage before placing large orders.
+Use searchContracts first to get the aliceId.`,
       inputSchema: z.object({
-        symbol: z.string().describe('Trading pair symbol'),
+        aliceId: z.string().describe('Contract identifier from searchContracts (e.g. "bybit-BTCUSDT")'),
         limit: z
           .number()
           .int()
@@ -66,11 +68,11 @@ Use this to evaluate liquidity and potential slippage before placing large order
           .describe('Number of price levels per side (default: 20)'),
         source: z.string().optional().describe(sourceDesc),
       }),
-      execute: async ({ symbol, limit, source }) => {
+      execute: async ({ aliceId, limit, source }) => {
         const resolved = resolveCcxtOne(source)
         if ('error' in resolved) return resolved
         const { account, id } = resolved
-        const result = await account.getOrderBook({ symbol }, limit ?? 20)
+        const result = await account.getOrderBook({ aliceId }, limit ?? 20)
         return { source: id, ...result }
       },
     }),

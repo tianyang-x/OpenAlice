@@ -60,7 +60,7 @@ export function aliceIdToCcxt(aliceId: string, exchangeName: string): string | n
 
 /**
  * Resolve a Contract to a CCXT symbol for API calls.
- * Tries: aliceId → localSymbol → search by symbol+secType.
+ * Tries: aliceId → localSymbol → symbol as CCXT key → search by base+secType.
  */
 export function contractToCcxt(
   contract: Contract,
@@ -84,7 +84,12 @@ export function contractToCcxt(
     return contract.localSymbol
   }
 
-  // 3. Search by symbol + secType (resolve to unique)
+  // 3. symbol might be a CCXT unified symbol (e.g. "BTC/USDT:USDT")
+  if (contract.symbol && markets[contract.symbol]) {
+    return contract.symbol
+  }
+
+  // 4. Search by base symbol + secType (resolve to unique)
   if (contract.symbol) {
     const candidates = resolveContractSync(contract, markets)
     if (candidates.length === 1) return candidates[0]

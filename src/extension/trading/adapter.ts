@@ -295,33 +295,33 @@ IMPORTANT: If result is an empty array [], you have no holdings.`,
     // ==================== Quote (query, optional source) ====================
 
     getQuote: tool({
-      description: `Query the latest quote/price for a symbol.
+      description: `Query the latest quote/price for a contract.
 
 Returns real-time market data from the broker:
 - last: last traded price
 - bid/ask: current best bid and ask
 - volume: today's trading volume
 
-Use this to check current prices before placing orders.`,
+Use searchContracts first to get the aliceId, then pass it here.`,
       inputSchema: z.object({
-        symbol: z.string().describe('Ticker symbol, e.g. "AAPL", "SPY", "BTC/USDT"'),
+        aliceId: z.string().describe('Contract identifier from searchContracts (e.g. "alpaca-AAPL", "bybit-BTCUSDT")'),
         source: z.string().optional().describe(sourceDesc(false)),
       }),
-      execute: async ({ symbol, source }) => {
+      execute: async ({ aliceId, source }) => {
         const targets = resolveAccounts(accountManager, source)
         if (targets.length === 0) return { error: 'No accounts available.' }
 
         const results: Array<Record<string, unknown>> = []
         for (const { account, id } of targets) {
           try {
-            const quote = await account.getQuote({ symbol })
+            const quote = await account.getQuote({ aliceId })
             results.push({ source: id, ...quote })
           } catch {
-            // Skip accounts that don't support this symbol
+            // Skip accounts that don't support this contract
           }
         }
 
-        if (results.length === 0) return { error: `No account could quote symbol "${symbol}".` }
+        if (results.length === 0) return { error: `No account could quote aliceId "${aliceId}".` }
         return results.length === 1 ? results[0] : results
       },
     }),
@@ -533,7 +533,8 @@ For SELLING holdings, use closePosition tool instead.
 NOTE: This stages the operation. Call tradingCommit + tradingPush to execute.`,
       inputSchema: z.object({
         source: z.string().describe(sourceDesc(true)),
-        symbol: z.string().describe('Ticker symbol, e.g. "AAPL", "SPY"'),
+        aliceId: z.string().describe('Contract identifier from searchContracts (e.g. "alpaca-AAPL", "bybit-BTCUSDT")'),
+        symbol: z.string().optional().describe('Human-readable symbol for logging (e.g. "AAPL", "BTC"). Optional — extracted from aliceId if omitted.'),
         side: z.enum(['buy', 'sell']).describe('Buy or sell'),
         type: z
           .enum(['market', 'limit', 'stop', 'stop_limit', 'trailing_stop', 'trailing_stop_limit', 'moc'])
@@ -601,6 +602,7 @@ NOTE: This stages the operation. Call tradingCommit + tradingPush to execute.`,
       }),
       execute: ({
         source,
+        aliceId,
         symbol,
         side,
         type,
@@ -622,6 +624,7 @@ NOTE: This stages the operation. Call tradingCommit + tradingPush to execute.`,
         return git.add({
           action: 'placeOrder',
           params: {
+            aliceId,
             symbol,
             side,
             type,
@@ -689,19 +692,20 @@ This is the preferred way to sell holdings instead of using placeOrder with side
 NOTE: This stages the operation. Call tradingCommit + tradingPush to execute.`,
       inputSchema: z.object({
         source: z.string().describe(sourceDesc(true)),
-        symbol: z.string().describe('Ticker symbol, e.g. "AAPL"'),
+        aliceId: z.string().describe('Contract identifier from searchContracts or getPortfolio (e.g. "alpaca-AAPL")'),
+        symbol: z.string().optional().describe('Human-readable symbol for logging. Optional.'),
         qty: z
           .number()
           .positive()
           .optional()
           .describe('Number of shares to sell (default: sell all)'),
       }),
-      execute: ({ source, symbol, qty }) => {
+      execute: ({ source, aliceId, symbol, qty }) => {
         const { id } = resolveOne(accountManager, source)
         const git = requireGit(resolver, id)
         return git.add({
           action: 'closePosition',
-          params: { symbol, qty },
+          params: { aliceId, symbol, qty },
         })
       },
     }),
