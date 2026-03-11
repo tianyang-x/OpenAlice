@@ -23,6 +23,9 @@ import { imfProvider } from '../../providers/imf/index.js'
 import { ecbProvider } from '../../providers/ecb/index.js'
 import { federalReserveProvider } from '../../providers/federal_reserve/index.js'
 import { intrinioProvider } from '../../providers/intrinio/index.js'
+import { blsProvider } from '../../providers/bls/index.js'
+import { eiaProvider } from '../../providers/eia/index.js'
+import { stubProvider } from '../../providers/stub/index.js'
 
 // --- Extension routers ---
 import { equityRouter } from '../../extensions/equity/equity-router.js'
@@ -33,6 +36,7 @@ import { economyRouter } from '../../extensions/economy/economy-router.js'
 import { etfRouter } from '../../extensions/etf/etf-router.js'
 import { indexRouter } from '../../extensions/index/index-router.js'
 import { derivativesRouter } from '../../extensions/derivatives/derivatives-router.js'
+import { commodityRouter } from '../../extensions/commodity/commodity-router.js'
 
 /**
  * Create and populate a Registry with all available providers.
@@ -51,6 +55,9 @@ export function createRegistry(): Registry {
   registry.includeProvider(ecbProvider)
   registry.includeProvider(federalReserveProvider)
   registry.includeProvider(intrinioProvider)
+  registry.includeProvider(blsProvider)
+  registry.includeProvider(eiaProvider)
+  registry.includeProvider(stubProvider)
   return registry
 }
 
@@ -76,5 +83,6 @@ export function loadAllRouters(): Router {
   root.includeRouter(etfRouter)
   root.includeRouter(indexRouter)
   root.includeRouter(derivativesRouter)
+  root.includeRouter(commodityRouter)
   return root
 }

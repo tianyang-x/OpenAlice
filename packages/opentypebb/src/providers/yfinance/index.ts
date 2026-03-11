@@ -37,6 +37,7 @@ import { YFinanceEtfInfoFetcher } from './models/etf-info.js'
 import { YFinanceEquityScreenerFetcher } from './models/equity-screener.js'
 import { YFinanceFuturesCurveFetcher } from './models/futures-curve.js'
 import { YFinanceOptionsChainsFetcher } from './models/options-chains.js'
+import { YFinanceCommoditySpotPriceFetcher } from './models/commodity-spot-price.js'
 
 export const yfinanceProvider = new Provider({
   name: 'yfinance',
@@ -77,6 +78,7 @@ export const yfinanceProvider = new Provider({
     EquityScreener: YFinanceEquityScreenerFetcher,
     FuturesCurve: YFinanceFuturesCurveFetcher,
     OptionsChains: YFinanceOptionsChainsFetcher,
+    CommoditySpotPrice: YFinanceCommoditySpotPriceFetcher,
   },
   reprName: 'Yahoo Finance',
 })
