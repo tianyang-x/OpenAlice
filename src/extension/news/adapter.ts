@@ -1,7 +1,6 @@
 /**
  * News AI Tools
  *
- * newsGetWorld:  全球新闻，用于宏观面判断。
  * newsGetCompany: 个股新闻，用于事件驱动和异动归因。
  */
 
@@ -11,24 +10,9 @@ import type { NewsClientLike } from '@/openbb/sdk/types'
 
 export function createNewsTools(
   newsClient: NewsClientLike,
-  providers: { companyProvider: string; worldProvider: string },
+  providers: { companyProvider: string },
 ) {
   return {
-    newsGetWorld: tool({
-      description: `Get world news headlines.
-
-Returns recent global news articles with title, date, source, and URL.
-Useful for understanding macro sentiment, geopolitical events, and market-moving headlines.`,
-      inputSchema: z.object({
-        limit: z.number().int().positive().optional().describe('Number of articles to return (default: 20)'),
-      }),
-      execute: async ({ limit }) => {
-        const params: Record<string, unknown> = { provider: providers.worldProvider }
-        if (limit) params.limit = limit
-        return await newsClient.getWorldNews(params)
-      },
-    }),
-
     newsGetCompany: tool({
       description: `Get news for a specific company.
 

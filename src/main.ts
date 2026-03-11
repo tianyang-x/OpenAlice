@@ -278,7 +278,6 @@ async function main() {
   toolCenter.register(createEquityTools(equityClient), 'equity')
   let newsTools = createNewsTools(newsClient, {
     companyProvider: providers.newsCompany,
-    worldProvider: providers.newsWorld,
   })
   if (config.newsCollector.piggybackOpenBB) {
     newsTools = wrapNewsToolsForPiggyback(newsTools, newsStore)
