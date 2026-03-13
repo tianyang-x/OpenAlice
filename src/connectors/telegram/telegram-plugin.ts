@@ -11,7 +11,8 @@ import type { ClaudeCodeConfig } from '../../ai-providers/claude-code/index.js'
 import { SessionStore } from '../../core/session'
 import { forceCompact } from '../../core/compaction'
 import { readAIBackend, writeAIBackend, type AIBackend } from '../../core/config'
-import type { ConnectorCenter, Connector } from '../../core/connector-center.js'
+import type { ConnectorCenter } from '../../core/connector-center.js'
+import type { Connector } from '../types.js'
 
 const MAX_MESSAGE_LENGTH = 4096
 
