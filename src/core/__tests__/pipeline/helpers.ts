@@ -13,16 +13,16 @@ import { DEFAULT_COMPACTION_CONFIG } from '../../compaction.js'
 // Re-export test doubles for convenience
 export { MemorySessionStore } from '../../session.js'
 export type { SessionEntry, ContentBlock } from '../../session.js'
-export { MockConnector } from '../../../connectors/mock.js'
-export type { MockConnectorCall } from '../../../connectors/mock.js'
+export { MockConnector } from '../../../connectors/mock/index.js'
+export type { MockConnectorCall } from '../../../connectors/mock/index.js'
 
 // Re-export MockAIProvider as FakeProvider for backward compatibility with existing tests
-export { MockAIProvider as FakeProvider } from '../../../ai-providers/mock.js'
-export { textEvent, toolUseEvent, toolResultEvent, doneEvent } from '../../../ai-providers/mock.js'
+export { MockAIProvider as FakeProvider } from '../../../ai-providers/mock/index.js'
+export { textEvent, toolUseEvent, toolResultEvent, doneEvent } from '../../../ai-providers/mock/index.js'
 
 // ==================== Helpers ====================
 
-import type { MockAIProvider } from '../../../ai-providers/mock.js'
+import type { MockAIProvider } from '../../../ai-providers/mock/index.js'
 
 /** Create an AgentCenter wired to a MockAIProvider. */
 export function makeAgentCenter(provider: MockAIProvider): AgentCenter {
