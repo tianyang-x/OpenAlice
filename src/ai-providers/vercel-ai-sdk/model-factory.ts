@@ -46,7 +46,7 @@ export async function createModelFromConfig(override?: ModelOverride): Promise<M
     }
     case 'openai': {
       const { createOpenAI } = await import('@ai-sdk/openai')
-      const client = createOpenAI({ apiKey: resolveApiKey('openai'), baseURL: url || undefined })
+      const client = createOpenAI({ apiKey: resolveApiKey('openai'), baseURL: url || undefined, compatibility: 'compatible' })
       return { model: client(m), key }
     }
     case 'google': {
